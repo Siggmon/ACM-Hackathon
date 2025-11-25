@@ -58,9 +58,7 @@ const vectorLayer = new VectorLayer({
         const eastingDiff = feature.get("eastingDiff");
         const northingDiff = feature.get("northingDiff");
 
-        const totalDisplacement = Math.sqrt(
-            Math.abs(heightDiff) + Math.abs(eastingDiff) + Math.abs(northingDiff)
-        );
+        const totalDisplacement = Math.abs(heightDiff) + Math.abs(eastingDiff) + Math.abs(northingDiff);
 
         let color;
         if (totalDisplacement > 0.01) {
