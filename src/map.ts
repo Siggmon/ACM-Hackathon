@@ -53,13 +53,35 @@ const baseLayer = new TileLayer({
 const vectorSource = new VectorSource();
 const vectorLayer = new VectorLayer({
     source: vectorSource,
-    style: new Style({
-        image: new Circle({
-            radius: 6,
-            fill: new Fill({ color: "rgba(255, 0, 0, 0.6)" }),
-            stroke: new Stroke({ color: "white", width: 2 }),
-        }),
-    }),
+    style: (feature) => {
+        const heightDiff = feature.get("heightDiff");
+        const eastingDiff = feature.get("eastingDiff");
+        const northingDiff = feature.get("northingDiff");
+
+        const totalDisplacement = Math.sqrt(
+            Math.abs(heightDiff) + Math.abs(eastingDiff) + Math.abs(northingDiff)
+        );
+
+        let color;
+        if (totalDisplacement > 0.01) {
+            color = "rgba(255, 0, 0, 0.8)";      // Red: High displacement (>10mm)
+        } else if (totalDisplacement > 0.005) {
+            color = "rgba(255, 165, 0, 0.8)";    // Orange: Medium displacement (5-10mm)
+        } else if (totalDisplacement > 0.002) {
+            color = "rgba(255, 255, 0, 0.8)";    // Yellow: Low displacement (2-5mm)
+        } else {
+            color = "rgba(0, 201, 23, 0.6)";     // Green: Minimal displacement (<2mm)
+        }
+        console.log(color)
+
+        return new Style({
+            image: new Circle({
+                radius: 6,
+                fill: new Fill({ color: color }),
+                stroke: new Stroke({ color: "white", width: 2 }),
+            }),
+        });
+    },
 });
 
 // Create map
